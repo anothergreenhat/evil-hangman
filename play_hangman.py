@@ -1,3 +1,5 @@
+# Joseph Madera
+
 from hangman import Hangman
 
 # Create an instance of hangman
