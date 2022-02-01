@@ -74,16 +74,16 @@ class Hangman:
                     continue
                 break
             guess_char = input("Enter a guess character: ")
+        # bad_guess = self.check_if_guess_is_bad(guess_char)
         bad_guess = self.check_if_guess_is_bad(guess_char)
         if bad_guess:
             self.guesses_left -= 1
             self.guessed_chars.append(guess_char)
-        else:
-            pass
+
         self.update_underscores()
         self.display_guessed_bad_chars()
 
-    def check_if_guess_is_bad(self, guess_char):
+    def DEPRIC_check_if_guess_is_bad(self, guess_char):
         list_with_guess = [word for word in self.current_dict if guess_char in word]
         list_without_guess = [word for word in self.current_dict if guess_char not in word]
         if len(list_without_guess) != 0:
@@ -91,9 +91,28 @@ class Hangman:
             return True
         else:
             # self.current_dict = largest word family with letter in it
-
+            self.create_word_family(guess_char)
             return False
 
+    def check_if_guess_is_bad(self, guess_char):
+        dict_key = ""
+        families = {}
+        largest_word_family_count = 0
+        for word in self.current_dict:
+            for char in word:
+                if char == guess_char:
+                    dict_key += guess_char
+                else:
+                    dict_key += "-"
+            families[dict_key].append(word)
+            dict_key = ""
+        largest_family_pair = max(families.items())
+        largest_family_value, largest_family_key = largest_family_pair
+        self.current_dict = families[largest_family_key]
+        if guess_char not in largest_family_key:
+            return True
+        else:
+            return False
 
     def play(self):
         word_not_guessed = True
