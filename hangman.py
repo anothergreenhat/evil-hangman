@@ -57,7 +57,7 @@ class Hangman:
         print(self.guess_key)
 
     def display_guesses_remaining(self):
-        print("guesses remaining:", self.guesses_left)
+        print("Guesses remaining:", self.guesses_left)
 
     def display_remaining_words(self):
         print(self.current_dict)
@@ -117,14 +117,13 @@ class Hangman:
         self.current_dict = families[longest_family_key]
         return longest_family_key
 
-    def play(self):
-        self.__init__()
-        is_word_guessed = False
-        self.get_word_length_from_input()
-        self.get_guess_number_from_input()
-        self.get_remaining_words_yes_no_from_input()
+    def display_empty_starting_underscores(self):
         for i in range(self.word_length):
             print("_", end="")
+        print()
+
+    def play_guess_loop(self):
+        is_word_guessed = False
         while self.guesses_left > 0 and not is_word_guessed:
             self.display_guesses_remaining()
             if self.show_remaining_words:
@@ -133,6 +132,14 @@ class Hangman:
         if is_word_guessed:
             print("Congrats, you won! >:(")
         else:
+            print("The word was '", self.current_dict[0],"'",sep="")
             print("I win, you lose! >:)")
 
+    def play(self):
+        self.__init__()
+        self.get_word_length_from_input()
+        self.get_guess_number_from_input()
+        self.get_remaining_words_yes_no_from_input()
+        self.display_empty_starting_underscores()
+        self.play_guess_loop()
 
