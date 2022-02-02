@@ -66,6 +66,11 @@ class Hangman:
     def display_guessed_bad_chars(self):
         print("Guessed letters:", self.bad_guessed_chars)
 
+    def display_empty_starting_underscores(self):
+        for i in range(self.word_length):
+            print("_", end="")
+        print()
+
     def get_guess_char_from_input(self):
         guess_char = input("Enter a guess character: ")
         while not isinstance(guess_char, int):
@@ -84,19 +89,6 @@ class Hangman:
                 break
             guess_char = input("Enter a guess character: ")
         return guess_char
-
-    def guess(self):
-        guess_char = self.get_guess_char_from_input()
-        self.guess_key = self.create_family_and_get_key(guess_char)
-        if guess_char not in self.guess_key:
-            self.guesses_left -= 1
-            self.bad_guessed_chars.append(guess_char)
-        self.update_underscores()
-        self.display_guessed_bad_chars()
-        if "_" in self.guess_key:
-            return False
-        else:
-            return True
 
     def create_family_and_get_key(self, guess_char):
         dict_key = ""
@@ -118,10 +110,18 @@ class Hangman:
         self.current_dict = families[longest_family_key]
         return longest_family_key
 
-    def display_empty_starting_underscores(self):
-        for i in range(self.word_length):
-            print("_", end="")
-        print()
+    def guess(self):
+        guess_char = self.get_guess_char_from_input()
+        self.guess_key = self.create_family_and_get_key(guess_char)
+        if guess_char not in self.guess_key:
+            self.guesses_left -= 1
+            self.bad_guessed_chars.append(guess_char)
+        self.update_underscores()
+        self.display_guessed_bad_chars()
+        if "_" in self.guess_key:
+            return False
+        else:
+            return True
 
     def play_guess_loop(self):
         is_word_guessed = False
