@@ -12,6 +12,7 @@ class Hangman:
         self.word_length = 0
         self.guesses_left = 0
         self.guessed_chars = []
+        self.guess_key = ""
         self.show_remaining_words = False
         with open("dictionary.txt", "r") as dict_file:
             for word in dict_file:
@@ -52,14 +53,11 @@ class Hangman:
             else:
                 print("You must enter yes or no.")
 
-    def update_underscores(self, guess_key=""):
-        if guess_key == "":
-            for i in range(self.word_length):
-                print("_", end="")
-        else:
-            print(guess_key)
-        print("   guesses remaining:", self.guesses_left)
-        # TODO: process updates for underscoring
+    def update_underscores(self):
+        print(self.guess_key)
+
+    def display_guesses_remaining(self):
+        print("guesses remaining:", self.guesses_left)
 
     def display_remaining_words(self):
         print(self.current_dict)
@@ -67,26 +65,37 @@ class Hangman:
     def display_guessed_bad_chars(self):
         print("Guessed letters:", self.guessed_chars)
 
-    def guess(self):
+    def get_guess_char_from_input(self):
         guess_char = input("Enter a guess character: ")
-        # TODO if guess is in set{guessed_letters} then retry
         while not isinstance(guess_char, int):
             try:
                 int(guess_char)
                 print("You must enter a character.")
             except ValueError:
+                if guess_char in self.guessed_chars:
+                    print("Character has already been guessed.")
+                    guess_char = input("Enter a guess character: ")
+                    continue
                 if len(guess_char) > 1:
                     print("You must enter a character.")
                     guess_char = input("Enter a guess character: ")
                     continue
                 break
             guess_char = input("Enter a guess character: ")
-        guess_key = self.create_family_and_get_key(guess_char)
-        if guess_char not in guess_key:
+        return guess_char
+
+    def guess(self):
+        guess_char = self.get_guess_char_from_input()
+        self.guess_key = self.create_family_and_get_key(guess_char)
+        if guess_char not in self.guess_key:
             self.guesses_left -= 1
             self.guessed_chars.append(guess_char)
-        self.update_underscores(guess_key)
+        self.update_underscores()
         self.display_guessed_bad_chars()
+        if "_" in self.guess_key:
+            return False
+        else:
+            return True
 
     def create_family_and_get_key(self, guess_char):
         dict_key = ""
@@ -95,6 +104,8 @@ class Hangman:
             for char in word:
                 if char == guess_char:
                     dict_key += guess_char
+                elif char in self.guess_key:
+                    dict_key += char
                 else:
                     dict_key += "_"
             if dict_key in families:
@@ -107,14 +118,21 @@ class Hangman:
         return longest_family_key
 
     def play(self):
-        word_not_guessed = True
+        self.__init__()
+        word_guessed = False
         self.get_word_length_from_input()
         self.get_guess_number_from_input()
         self.get_remaining_words_yes_no_from_input()
-        self.update_underscores()
-        while self.guesses_left > 0:
+        for i in range(self.word_length):
+            print("_", end="")
+        while self.guesses_left > 0 and not word_guessed:
+            self.display_guesses_remaining()
             if self.show_remaining_words:
                 self.display_remaining_words()
-            self.guess()
+            word_guessed = self.guess()
+        if word_guessed:
+            print("Congrats, you won! >:(")
+        else:
+            print("I win, you lose! >:)")
 
 
