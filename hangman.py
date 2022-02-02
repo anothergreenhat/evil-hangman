@@ -1,5 +1,6 @@
 # Joseph Madera
 
+# I found this method to find the maximum length list from a dictionary and return its key
 def find_longest_family_key(families):
     return max(families, key=lambda family_key: len(set(families[family_key])))
 
@@ -132,7 +133,7 @@ class Hangman:
         if is_word_guessed:
             print("Congrats, you won! >:(")
         else:
-            print("The word was '", self.current_dict[0],"'",sep="")
+            print("The word was '", self.current_dict[0], "'", sep="")
             print("I win, you lose! >:)")
 
     def play(self):
