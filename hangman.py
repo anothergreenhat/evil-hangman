@@ -119,18 +119,18 @@ class Hangman:
 
     def play(self):
         self.__init__()
-        word_guessed = False
+        is_word_guessed = False
         self.get_word_length_from_input()
         self.get_guess_number_from_input()
         self.get_remaining_words_yes_no_from_input()
         for i in range(self.word_length):
             print("_", end="")
-        while self.guesses_left > 0 and not word_guessed:
+        while self.guesses_left > 0 and not is_word_guessed:
             self.display_guesses_remaining()
             if self.show_remaining_words:
                 self.display_remaining_words()
-            word_guessed = self.guess()
-        if word_guessed:
+            is_word_guessed = self.guess()
+        if is_word_guessed:
             print("Congrats, you won! >:(")
         else:
             print("I win, you lose! >:)")
