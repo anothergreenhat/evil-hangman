@@ -132,7 +132,7 @@ class Hangman:
         if is_word_guessed:
             print("Congrats, you won! >:(")
         else:
-            print("The word was '", self.current_dict[0],"'",sep="")
+            print("The word was '", self.current_dict[0], "'", sep="")
             print("I win, you lose! >:)")
 
     def play(self):
