@@ -12,7 +12,7 @@ class Hangman:
         self.current_dict = []
         self.word_length = 0
         self.guesses_left = 0
-        self.guessed_chars = []
+        self.bad_guessed_chars = []
         self.guess_key = ""
         self.show_remaining_words = False
         with open("dictionary.txt", "r") as dict_file:
@@ -64,7 +64,7 @@ class Hangman:
         print(self.current_dict)
 
     def display_guessed_bad_chars(self):
-        print("Guessed letters:", self.guessed_chars)
+        print("Guessed letters:", self.bad_guessed_chars)
 
     def get_guess_char_from_input(self):
         guess_char = input("Enter a guess character: ")
@@ -73,7 +73,7 @@ class Hangman:
                 int(guess_char)
                 print("You must enter a character.")
             except ValueError:
-                if guess_char in self.guessed_chars:
+                if guess_char in self.bad_guessed_chars or guess_char in self.guess_key:
                     print("Character has already been guessed.")
                     guess_char = input("Enter a guess character: ")
                     continue
@@ -90,7 +90,7 @@ class Hangman:
         self.guess_key = self.create_family_and_get_key(guess_char)
         if guess_char not in self.guess_key:
             self.guesses_left -= 1
-            self.guessed_chars.append(guess_char)
+            self.bad_guessed_chars.append(guess_char)
         self.update_underscores()
         self.display_guessed_bad_chars()
         if "_" in self.guess_key:
