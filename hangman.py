@@ -90,7 +90,13 @@ class Hangman:
             guess_char = input("Enter a guess character: ")
         return guess_char
 
-    def create_family_and_get_key(self, guess_char):
+    def get_longest_family_key(self, guess_char):
+        families = self.get_families(guess_char)
+        longest_family_key = find_longest_family_key(families)
+        self.current_dict = families[longest_family_key]
+        return longest_family_key
+
+    def get_families(self, guess_char):
         dict_key = ""
         families = {}
         for word in self.current_dict:
@@ -106,35 +112,29 @@ class Hangman:
             else:
                 families[dict_key] = [word]
             dict_key = ""
-        longest_family_key = find_longest_family_key(families)
-        self.current_dict = families[longest_family_key]
-        return longest_family_key
+        return families
 
     def guess(self):
         guess_char = self.get_guess_char_from_input()
-        self.guess_key = self.create_family_and_get_key(guess_char)
+        self.guess_key = self.get_longest_family_key(guess_char)
         if guess_char not in self.guess_key:
             self.guesses_left -= 1
             self.bad_guessed_chars.append(guess_char)
         self.update_underscores()
         self.display_guessed_bad_chars()
-        if "_" in self.guess_key:
-            return False
-        else:
+        if "_" not in self.guess_key:
             return True
+        else:
+            return False
 
-    def play_guess_loop(self):
+    def guess_word(self):
         is_word_guessed = False
         while self.guesses_left > 0 and not is_word_guessed:
             self.display_guesses_remaining()
             if self.show_remaining_words:
                 self.display_remaining_words()
             is_word_guessed = self.guess()
-        if is_word_guessed:
-            print("Congrats, you won! >:(")
-        else:
-            print("The word was '", self.current_dict[0], "'", sep="")
-            print("I win, you lose! >:)")
+        return is_word_guessed
 
     def play(self):
         self.__init__()
@@ -142,5 +142,10 @@ class Hangman:
         self.get_guess_number_from_input()
         self.get_remaining_words_yes_no_from_input()
         self.display_empty_starting_underscores()
-        self.play_guess_loop()
+        is_word_guessed = self.guess_word()
+        if is_word_guessed:
+            print("Congrats, you won! >:(")
+        else:
+            print("The word was '", self.current_dict[0], "'", sep="")
+            print("I win, you lose! >:)")
 
