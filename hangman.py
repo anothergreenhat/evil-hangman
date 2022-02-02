@@ -1,5 +1,9 @@
 # Joseph Madera
 
+def find_longest_family_key(families):
+    return max(families, key=lambda family_key: len(set(families[family_key])))
+
+
 class Hangman:
 
     def __init__(self):
@@ -48,9 +52,12 @@ class Hangman:
             else:
                 print("You must enter yes or no.")
 
-    def update_underscores(self):
-        for i in range(self.word_length):
-            print("_", end="")
+    def update_underscores(self, guess_key=""):
+        if guess_key == "":
+            for i in range(self.word_length):
+                print("_", end="")
+        else:
+            print(guess_key)
         print("   guesses remaining:", self.guesses_left)
         # TODO: process updates for underscoring
 
@@ -74,45 +81,30 @@ class Hangman:
                     continue
                 break
             guess_char = input("Enter a guess character: ")
-        # bad_guess = self.check_if_guess_is_bad(guess_char)
-        bad_guess = self.check_if_guess_is_bad(guess_char)
-        if bad_guess:
+        guess_key = self.create_family_and_get_key(guess_char)
+        if guess_char not in guess_key:
             self.guesses_left -= 1
             self.guessed_chars.append(guess_char)
-
-        self.update_underscores()
+        self.update_underscores(guess_key)
         self.display_guessed_bad_chars()
 
-    def DEPRIC_check_if_guess_is_bad(self, guess_char):
-        list_with_guess = [word for word in self.current_dict if guess_char in word]
-        list_without_guess = [word for word in self.current_dict if guess_char not in word]
-        if len(list_without_guess) != 0:
-            self.current_dict = list_without_guess
-            return True
-        else:
-            # self.current_dict = largest word family with letter in it
-            self.create_word_family(guess_char)
-            return False
-
-    def check_if_guess_is_bad(self, guess_char):
+    def create_family_and_get_key(self, guess_char):
         dict_key = ""
         families = {}
-        largest_word_family_count = 0
         for word in self.current_dict:
             for char in word:
                 if char == guess_char:
                     dict_key += guess_char
                 else:
-                    dict_key += "-"
-            families[dict_key].append(word)
+                    dict_key += "_"
+            if dict_key in families:
+                families[dict_key].append(word)
+            else:
+                families[dict_key] = [word]
             dict_key = ""
-        largest_family_pair = max(families.items())
-        largest_family_value, largest_family_key = largest_family_pair
-        self.current_dict = families[largest_family_key]
-        if guess_char not in largest_family_key:
-            return True
-        else:
-            return False
+        longest_family_key = find_longest_family_key(families)
+        self.current_dict = families[longest_family_key]
+        return longest_family_key
 
     def play(self):
         word_not_guessed = True
